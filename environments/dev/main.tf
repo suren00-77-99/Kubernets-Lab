@@ -66,17 +66,17 @@ module "iam" {
 module "eks" {
   source = "../../modules/eks"
 
-  cluster_name        = var.cluster_name
-  cluster_version     = var.cluster_version
-  cluster_role_arn    = module.iam.cluster_role_arn
-  node_role_arn       = module.iam.node_role_arn
-  vpc_id = data.aws_vpc.default.id
-  subnet_ids = data.aws_subnets.default.ids
-  instance_types      = var.instance_types
-  capacity_type       = var.capacity_type
-  desired_size        = var.desired_size
-  min_size            = var.min_size
-  max_size            = var.max_size
+  cluster_name     = var.cluster_name
+  cluster_version  = var.cluster_version
+  cluster_role_arn = module.iam.cluster_role_arn
+  node_role_arn    = module.iam.node_role_arn
+  vpc_id           = data.aws_vpc.default.id
+  subnet_ids       = data.aws_subnets.default.ids
+  instance_types   = var.instance_types
+  capacity_type    = var.capacity_type
+  desired_size     = var.desired_size
+  min_size         = var.min_size
+  max_size         = var.max_size
 
   tags = local.common_tags
 
