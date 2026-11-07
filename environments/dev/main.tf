@@ -44,6 +44,18 @@ terraform {
 #   tags = local.common_tags
 # }
 
+data "aws_vpc" "default" {
+  default = true
+}
+
+
+data "aws_subnets" "default" {
+  filter {
+    name   = "vpc-id"
+    values = [data.aws_vpc.default.id]
+  }
+}
+
 module "iam" {
   source = "../../modules/iam"
 
@@ -58,8 +70,8 @@ module "eks" {
   cluster_version     = var.cluster_version
   cluster_role_arn    = module.iam.cluster_role_arn
   node_role_arn       = module.iam.node_role_arn
-  private_subnet_ids  = module.vpc.private_subnet_ids
-  public_access_cidrs = var.public_access_cidrs
+  vpc_id = data.aws_vpc.default.id
+  subnet_ids = data.aws_subnets.default.ids
   instance_types      = var.instance_types
   capacity_type       = var.capacity_type
   desired_size        = var.desired_size
