@@ -32,28 +32,16 @@ terraform {
 }
 
 
-# module "vpc" {
-#   source = "../../modules/vpc"
+module "vpc" {
+  source = "../../modules/vpc"
 
-#   name                 = var.name
-#   cluster_name         = var.cluster_name
-#   vpc_cidr             = var.vpc_cidr
-#   public_subnet_cidrs  = var.public_subnet_cidrs
-#   private_subnet_cidrs = var.private_subnet_cidrs
+  name                 = var.name
+  cluster_name         = var.cluster_name
+  vpc_cidr             = var.vpc_cidr
+  public_subnet_cidrs  = var.public_subnet_cidrs
+  private_subnet_cidrs = var.private_subnet_cidrs
 
-#   tags = local.common_tags
-# }
-
-data "aws_vpc" "default" {
-  default = true
-}
-
-
-data "aws_subnets" "default" {
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.default.id]
-  }
+  tags = local.common_tags
 }
 
 module "iam" {
@@ -66,17 +54,17 @@ module "iam" {
 module "eks" {
   source = "../../modules/eks"
 
-  cluster_name     = var.cluster_name
-  cluster_version  = var.cluster_version
-  cluster_role_arn = module.iam.cluster_role_arn
-  node_role_arn    = module.iam.node_role_arn
-  vpc_id           = data.aws_vpc.default.id
-  subnet_ids       = data.aws_subnets.default.ids
-  instance_types   = var.instance_types
-  capacity_type    = var.capacity_type
-  desired_size     = var.desired_size
-  min_size         = var.min_size
-  max_size         = var.max_size
+  cluster_name        = var.cluster_name
+  cluster_version     = var.cluster_version
+  cluster_role_arn    = module.iam.cluster_role_arn
+  node_role_arn       = module.iam.node_role_arn
+  private_subnet_ids  = module.vpc.private_subnet_ids
+  public_access_cidrs = var.public_access_cidrs
+  instance_types      = var.instance_types
+  capacity_type       = var.capacity_type
+  desired_size        = var.desired_size
+  min_size            = var.min_size
+  max_size            = var.max_size
 
   tags = local.common_tags
 
